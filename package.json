@@ -2,8 +2,8 @@
   "name": "chatify-app",
   "version": "1.0.0",
   "main": "index.js",
-  "engines":{
-    "node":">=20.0.0"
+  "engines": {
+    "node": ">=20.0.0"
   },
   "scripts": {
     "build": "npm i --prefix backend && npm i --prefix frontend && npm run build --prefix frontend",
