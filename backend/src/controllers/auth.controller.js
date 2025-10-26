@@ -4,7 +4,7 @@ import User from '../models/User.js'
 import bcrypt from 'bcryptjs'
 import { ENV } from '../lib/env.js'
 
-export const signUp = async (req, res) => {
+export const signup = async (req, res) => {
   const { fullName, email, passWord } = req.body
   try {
     if (!fullName || !email || !passWord) {
@@ -65,7 +65,43 @@ export const signUp = async (req, res) => {
       res.status(400).json({ message: 'Invalid user data' })
     }
   } catch (error) {
-    console.log('Error in signUp controller', error)
+    console.error('Error in signup controller', error)
     res.status(500).json({ message: 'Internal server error' })
   }
+}
+
+export const login = async (req, res) => {
+  const { email, passWord } = req.body
+  try {
+    if (!email || !passWord) {
+      return res.status(400).json({ message: 'All field are required' })
+    }
+    const user = await User.findOne({ email: email })
+    if (!user) {
+      return res.status(400).json({ message: 'Invalid credentials' })
+    }
+    // never tell the client which one is incorrect: email or password
+    const isPasswordCorrect = await bcrypt.compare(passWord, user.passWord)
+
+    if (!isPasswordCorrect) {
+      return res.status(400).json({ message: 'Invalid credentials' })
+    }
+
+    generateToken(user._id, res)
+
+    res.status(200).json({
+      _id: user._id,
+      fullName: user.fullName,
+      email: user.email,
+      profilePic: user.profilePic
+    })
+  } catch (error) {
+    console.error('Error in login controller', error)
+    res.status(500).json({ message: 'Internal server error' })
+  }
+}
+
+export const logout = async (req, res) => {
+  res.cookie('jwt', '', { maxAge: 0 })
+  res.status(200).json({ message: 'Logged out successfully' })
 }
