@@ -11,7 +11,7 @@ export const arcjetProtection = async (req, res, next) => {
       } else if (decision.reason.isBot()) {
         return res.status(403).json({ message: 'Bot access denied.' })
       } else {
-        return res.status(403).json('Access denied by security policy')
+        return res.status(403).json({ message: 'Access denied by security policy' })
       }
     }
 
