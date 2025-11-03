@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router'
+import { Link } from 'react-router-dom'
 import { useAuthStore } from '../store/useAuthStore'
 import BorderAnimatedContainer from '../components/BorderAnimatedContainer'
 import { LockIcon, MailIcon, MessageCircleIcon, UserIcon, LoaderIcon } from 'lucide-react'
@@ -30,7 +30,7 @@ function SignUpPage() {
                 <form onSubmit={handleSubmit} className="space-y-6">
                   {/* FULL NAME */}
                   <div>
-                    <label className="auth-input-label">Full Name</label>
+                    <label className="auth-input-label">Fullname:</label>
                     <div className="relative">
                       <UserIcon className="auth-input-icon" />
                       <input
@@ -40,7 +40,7 @@ function SignUpPage() {
                           setFormData({ ...formData, fullName: e.target.value })
                         }}
                         className="input"
-                        placeholder="Minh Hieu"
+                        placeholder="Enter your name"
                       />
                     </div>
                   </div>
@@ -50,19 +50,19 @@ function SignUpPage() {
                     <div className="relative">
                       <MailIcon className="auth-input-icon" />
                       <input
-                        type="email"
+                        type="email:"
                         value={formData.email}
                         onChange={(e) => {
                           setFormData({ ...formData, email: e.target.value })
                         }}
                         className="input"
-                        placeholder="tranhieu@gmail.com"
+                        placeholder="Enter your email"
                       />
                     </div>
                   </div>{' '}
                   {/* PASS WORD */}
                   <div>
-                    <label className="auth-input-label">Pass Word</label>
+                    <label className="auth-input-label">Password:</label>
                     <div className="relative">
                       <LockIcon className="auth-input-icon" />
                       <input
