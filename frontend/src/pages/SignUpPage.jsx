@@ -46,11 +46,11 @@ function SignUpPage() {
                   </div>
                   {/*EMAIL */}
                   <div>
-                    <label className="auth-input-label">Email</label>
+                    <label className="auth-input-label">Email:</label>
                     <div className="relative">
                       <MailIcon className="auth-input-icon" />
                       <input
-                        type="email:"
+                        type="email"
                         value={formData.email}
                         onChange={(e) => {
                           setFormData({ ...formData, email: e.target.value })
