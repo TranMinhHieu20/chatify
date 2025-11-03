@@ -1,12 +1,35 @@
 import { create } from 'zustand'
-
+import { axiosInstance } from '../lib/axios'
+import { toast } from 'sonner'
 export const useAuthStore = create((set) => ({
-  authUser: { name: 'Minh Hieu', _id: 123, age: 21 },
-  isLoggedIn: false,
-  isLoading: false,
+  authUser: null,
+  isCheckingAuth: true,
+  isSigningUp: false,
 
-  login: () => {
-    console.log('we just logged in chatify')
-    set({ isLoggedIn: true, isLoading: true })
+  checkAuth: async () => {
+    try {
+      const res = await axiosInstance.get('/auth/check')
+      set({ authUser: res.data })
+    } catch (error) {
+      console.log('Error is checkAuth', error)
+      set({ authUser: null })
+    } finally {
+      set({ isCheckingAuth: false })
+    }
+  },
+
+  signup: async (data) => {
+    set({ isSigningUp: true })
+    try {
+      const res = await axiosInstance.post('/auth/signup', data)
+      set({ authUser: res.data })
+      // toast
+      toast.success('Account created successfully!')
+    } catch (error) {
+      toast.error(error.response.data.message)
+      console.log('Error Signup In', error)
+    } finally {
+      set({ isSigningUp: false })
+    }
   }
 }))

@@ -1,6 +1,7 @@
 import express from 'express'
 import path from 'path'
 import cookieParser from 'cookie-parser'
+import cors from 'cors'
 import authRoutes from './routes/auth.route.js'
 import messageRoutes from './routes/message.route.js'
 import { connectDB } from './lib/db.js'
@@ -12,6 +13,7 @@ const __dirname = path.resolve()
 const PORT = ENV.PORT || 3001
 
 app.use(express.json()) // req.body
+app.use(cors({ origin: ENV.CLIENT_URL, credentials: true })) // cho frontend try cap backend khi chay o domain khac, gui cookie tu front len backend
 app.use(cookieParser())
 
 app.use('/api/auth', authRoutes)
