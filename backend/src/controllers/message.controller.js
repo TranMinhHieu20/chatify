@@ -79,8 +79,8 @@ export const sendMessage = async (req, res) => {
 
     // todo: send message in real time if user is online -socket.io
   } catch (error) {
-    console.log('Error in sendMessage', error.message)
     res.status(500).json({ message: 'Server error' })
+    console.error('Error in sendMessage', error.message)
   }
 }
 
