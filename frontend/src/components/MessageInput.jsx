@@ -13,13 +13,13 @@ function MessageInput() {
 
   const fileInputRef = useRef(null)
 
-  const { sendMessage, isSoundEnable } = useChatStore()
+  const { sendMessage, isSoundEnabled } = useChatStore()
 
   const handleSendMessage = (e) => {
     e.preventDefault()
 
     if (!text.trim() && !imagePreview) return
-    if (isSoundEnable) playRandomKeyStrokeSound()
+    if (isSoundEnabled) playRandomKeyStrokeSound()
 
     // gui data len store backend
     sendMessage({
@@ -29,7 +29,7 @@ function MessageInput() {
 
     // reset input
     setText('')
-    setImagePreview('')
+    setImagePreview(null)
 
     // reset lai input file
     if (fileInputRef.current) fileInputRef.current.value = ''
@@ -82,7 +82,7 @@ function MessageInput() {
           value={text}
           onChange={(e) => {
             setText(e.target.value)
-            isSoundEnable && playRandomKeyStrokeSound()
+            isSoundEnabled && playRandomKeyStrokeSound()
           }}
           className="flex-1 bg-slate-800/50 border  border-slate-700/50 focus:border-blue-700/50 outline-none rounded-lg py-2 px-4"
           placeholder="Enter type your message..."
