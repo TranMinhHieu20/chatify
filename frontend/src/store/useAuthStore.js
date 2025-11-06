@@ -67,7 +67,7 @@ export const useAuthStore = create((set) => ({
       toast.success('Profile updated successfully')
     } catch (error) {
       console.log('Profile error update')
-      toast.error(error.response.data.message)
+      toast.error(error.response.data.message || 'Profile error update')
     }
   }
 }))
