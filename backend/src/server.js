@@ -12,7 +12,8 @@ const __dirname = path.resolve()
 
 const PORT = ENV.PORT || 3001
 
-app.use(express.json()) // req.body
+app.use(express.json({ limit: '10mb' })) // req.body, tang dung luong khi gui anh
+app.use(express.urlencoded({ limit: '10mb', extended: true }))
 app.use(cors({ origin: ENV.CLIENT_URL, credentials: true })) // cho frontend try cap backend khi chay o domain khac, gui cookie tu front len backend
 app.use(cookieParser())
 
