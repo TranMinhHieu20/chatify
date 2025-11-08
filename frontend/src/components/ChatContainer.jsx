@@ -8,7 +8,14 @@ import MessagesLoadingSkeleton from './MessagesLoadingSkeleton'
 import { XIcon } from 'lucide-react'
 
 function ChatContainer() {
-  const { selectedUser, getMessagesByUserId, isMessagesLoading, messages } = useChatStore()
+  const {
+    selectedUser,
+    getMessagesByUserId,
+    isMessagesLoading,
+    messages,
+    unsubscribeFromMessages,
+    subscribeToMessages
+  } = useChatStore()
 
   const { authUser } = useAuthStore()
 
@@ -18,7 +25,11 @@ function ChatContainer() {
   useEffect(() => {
     if (!selectedUser?._id) return
     getMessagesByUserId(selectedUser._id)
-  }, [selectedUser, getMessagesByUserId])
+
+    subscribeToMessages()
+
+    return () => unsubscribeFromMessages()
+  }, [selectedUser, getMessagesByUserId, subscribeToMessages, unsubscribeFromMessages])
 
   useEffect(() => {
     if (messageEndRef.current) {
