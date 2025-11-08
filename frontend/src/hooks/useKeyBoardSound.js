@@ -1,10 +1,10 @@
 // audio setup
 
 const keyStrokeSounds = [
-  new Audio('/sound/frontend_public_sounds_keystroke1.mp3'),
-  new Audio('/sound/frontend_public_sounds_keystroke2.mp3'),
-  new Audio('/sound/frontend_public_sounds_keystroke3.mp3'),
-  new Audio('/sound/frontend_public_sounds_keystroke4.mp3')
+  new Audio('/sounds/frontend_public_sounds_keystroke1.mp3'),
+  new Audio('/sounds/frontend_public_sounds_keystroke2.mp3'),
+  new Audio('/sounds/frontend_public_sounds_keystroke3.mp3'),
+  new Audio('/sounds/frontend_public_sounds_keystroke4.mp3')
 ]
 
 function useKeyBoardSound() {
