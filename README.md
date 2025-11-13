@@ -14,3 +14,8 @@ npm i react-hot-toast
 npm i sonner
 npm i socket.io-client@4.8.1
 ![alt text](screenshot-for-readme.png)
+
+Thành viên trong nhóm:
+Trần Minh Hiếu
+Trần Đỗ Hoàng
+Nguyễn Đắc Thế Đức
