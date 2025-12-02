@@ -20,7 +20,9 @@ export const signup = async (req, res) => {
 
     // check length passWord
     if (passWord.length < 6) {
-      return res.status(400).json({ message: 'Password must be at least 6 characters' })
+      return res
+        .status(400)
+        .json({ message: 'Password must be at least 6 characters' })
     }
 
     // connect model
@@ -58,7 +60,11 @@ export const signup = async (req, res) => {
       // todo: send a welcome email to user
 
       try {
-        await sendWelcomeEmail(saveUser.email, saveUser.fullName, ENV.CLIENT_URL)
+        await sendWelcomeEmail(
+          saveUser.email,
+          saveUser.fullName,
+          ENV.CLIENT_URL
+        )
       } catch (error) {
         console.error('Failed to send welcome email: ', error)
       }
@@ -117,7 +123,11 @@ export const updateProfile = async (req, res) => {
 
     const uploadResponse = await cloudinary.uploader.upload(profilePic)
 
-    const updatedUser = await User.findByIdAndUpdate(userId, { profilePic: uploadResponse.secure_url }, { new: true })
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { profilePic: uploadResponse.secure_url },
+      { new: true }
+    )
 
     res.status(200).json(updatedUser)
   } catch (error) {
