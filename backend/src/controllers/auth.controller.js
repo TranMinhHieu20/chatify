@@ -6,7 +6,7 @@ import { ENV } from '../lib/env.js'
 import cloudinary from '../lib/cloudinary.js'
 
 export const signup = async (req, res) => {
-  const { fullName, email, passWord } = req.body
+  const { fullName, email, passWord, publicKey } = req.body
   try {
     if (!fullName || !email || !passWord) {
       return res.status(400).json({ message: 'All field are required' })
@@ -20,9 +20,7 @@ export const signup = async (req, res) => {
 
     // check length passWord
     if (passWord.length < 6) {
-      return res
-        .status(400)
-        .json({ message: 'Password must be at least 6 characters' })
+      return res.status(400).json({ message: 'Password must be at least 6 characters' })
     }
 
     // connect model
@@ -39,7 +37,8 @@ export const signup = async (req, res) => {
     const newUser = User({
       fullName,
       email,
-      passWord: hashedPassword
+      passWord: hashedPassword,
+      publicKey: publicKey || ''
     })
 
     if (newUser) {
@@ -54,17 +53,14 @@ export const signup = async (req, res) => {
         _id: newUser._id,
         fullName: newUser.fullName,
         email: newUser.email,
-        profilePic: newUser.profilePic
+        profilePic: newUser.profilePic,
+        publicKey: newUser.publicKey
       })
 
       // todo: send a welcome email to user
 
       try {
-        await sendWelcomeEmail(
-          saveUser.email,
-          saveUser.fullName,
-          ENV.CLIENT_URL
-        )
+        await sendWelcomeEmail(saveUser.email, saveUser.fullName, ENV.CLIENT_URL)
       } catch (error) {
         console.error('Failed to send welcome email: ', error)
       }
@@ -73,6 +69,28 @@ export const signup = async (req, res) => {
     }
   } catch (error) {
     console.error('Error in signup controller', error)
+    res.status(500).json({ message: 'Internal server error' })
+  }
+}
+
+// Thêm endpoint để upload publicKey
+export const uploadPublicKey = async (req, res) => {
+  try {
+    const { publicKey } = req.body
+    const userId = req.user._id
+
+    if (!publicKey) {
+      return res.status(400).json({ message: 'Public key is required' })
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(userId, { publicKey }, { new: true })
+
+    res.status(200).json({
+      message: 'Public key uploaded successfully',
+      publicKey: updatedUser.publicKey
+    })
+  } catch (error) {
+    console.error('Error in uploadPublicKey', error)
     res.status(500).json({ message: 'Internal server error' })
   }
 }
@@ -100,7 +118,8 @@ export const login = async (req, res) => {
       _id: user._id,
       fullName: user.fullName,
       email: user.email,
-      profilePic: user.profilePic
+      profilePic: user.profilePic,
+      publicKey: user.publicKey
     })
   } catch (error) {
     console.error('Error in login controller', error)
@@ -123,11 +142,7 @@ export const updateProfile = async (req, res) => {
 
     const uploadResponse = await cloudinary.uploader.upload(profilePic)
 
-    const updatedUser = await User.findByIdAndUpdate(
-      userId,
-      { profilePic: uploadResponse.secure_url },
-      { new: true }
-    )
+    const updatedUser = await User.findByIdAndUpdate(userId, { profilePic: uploadResponse.secure_url }, { new: true })
 
     res.status(200).json(updatedUser)
   } catch (error) {
