@@ -47,37 +47,32 @@ export const getMessagesByUserId = async (req, res) => {
 
 export const sendMessage = async (req, res) => {
   try {
-    const { text, image } = req.body
+    const { text, image, encryptedText, nonce } = req.body
     const { id: userToChatId } = req.params
     const senderId = req.user._id
 
-    if (!text && !image) {
+    if (!text && !image && !encryptedText) {
       return res.status(400).json({ message: 'Text or image is required.' })
     }
-    // if (senderId.equals(receiverId)) {
-    //   return res.status(400).json({ message: 'Cannot send messages to yourself.' })
-    // }
-    // const receiverExists = await User.exists({ _id: receiverId })
-    // if (!receiverExists) {
-    //   return res.status(404).json({ message: 'Receiver not found.' })
-    // }
 
     let imageUrl
     if (image) {
-      // up load base64 image to cloudinary
       const uploadResponse = await cloudinary.uploader.upload(image)
       imageUrl = uploadResponse.secure_url
     }
+
     const newMessage = new Message({
       senderId,
       receiverId: userToChatId,
-      text,
-      image: imageUrl
+      text, // ✅ Lưu plaintext (chỉ người gửi thấy)
+      image: imageUrl,
+      encryptedText, // ✅ Lưu encrypted (người nhận giải mã)
+      nonce,
+      senderPublicKey: req.user.publicKey
     })
 
     await newMessage.save()
 
-    // todo: send message in real time if user is online -socket.io
     const receiverSocketId = getReceiverSocketId(userToChatId)
     if (receiverSocketId) {
       io.to(receiverSocketId).emit('newMessage', newMessage)
@@ -122,6 +117,22 @@ export const getChatsPartners = async (req, res) => {
     res.status(201).json(chatPartners)
   } catch (error) {
     console.log('Error in getChatsPartners', error.message)
+    res.status(500).json({ message: 'Server error' })
+  }
+}
+
+export const getPublicKey = async (req, res) => {
+  try {
+    const { userId } = req.params
+    const user = await User.findById(userId).select('publicKey')
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' })
+    }
+
+    res.status(200).json({ publicKey: user.publicKey })
+  } catch (error) {
+    console.log('Error in getPublicKey', error.message)
     res.status(500).json({ message: 'Server error' })
   }
 }

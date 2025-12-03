@@ -19,6 +19,13 @@ const userSchema = new mongoose.Schema(
     profilePic: {
       type: String,
       default: ''
+    },
+    // Thêm public key cho E2EE
+    publicKey: {
+      type: String,
+      default: '', // Thay unique: true + required: true
+      unique: true, // Giữ unique để không có 2 public key giống nhau
+      sparse: true // Thêm sparse để cho phép nhiều null values
     }
   },
   {

@@ -2,6 +2,7 @@ import { create } from 'zustand'
 import { axiosInstance } from '../lib/axios'
 import { toast } from 'sonner'
 import io from 'socket.io-client'
+import { generateKeyPair } from '../lib/crypto'
 
 const base_URL = import.meta.env.MODE === 'development' ? 'http://localhost:3000' : '/'
 
@@ -12,11 +13,17 @@ export const useAuthStore = create((set, get) => ({
   isLoggingIn: false,
   socket: null,
   onlineUsers: [],
+  privateKey: null, // Lưu private key locally
 
   checkAuth: async () => {
     try {
       const res = await axiosInstance.get('/auth/check')
       set({ authUser: res.data })
+
+      const privateKey = localStorage.getItem('privateKey')
+      if (privateKey) {
+        set({ privateKey })
+      }
       get().connectSocket()
     } catch (error) {
       console.log('Error is checkAuth', error)
@@ -31,7 +38,12 @@ export const useAuthStore = create((set, get) => ({
     try {
       const res = await axiosInstance.post('/auth/signup', data)
       set({ authUser: res.data })
-      // toast
+
+      const { privateKey, publicKey } = await generateKeyPair()
+      await axiosInstance.post('/auth/upload-public-key', { publicKey })
+
+      localStorage.setItem('privateKey', privateKey) // Lưu private key
+      set({ privateKey })
       toast.success('Account created successfully!')
       get().connectSocket()
     } catch (error) {
@@ -47,7 +59,11 @@ export const useAuthStore = create((set, get) => ({
     try {
       const res = await axiosInstance.post('/auth/login', data)
       set({ authUser: res.data })
-      // toast
+
+      const privateKey = localStorage.getItem('privateKey')
+      if (privateKey) {
+        set({ privateKey })
+      }
       toast.success('Account logged successfully!')
       get().connectSocket()
     } catch (error) {

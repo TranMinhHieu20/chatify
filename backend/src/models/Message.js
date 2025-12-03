@@ -19,6 +19,19 @@ const messageSchema = new mongoose.Schema(
     },
     image: {
       type: String
+    },
+    // Thêm ciphertext (tin nhắn được mã hóa)
+    encryptedText: {
+      type: String,
+      trim: true
+    },
+    // Thêm nonce (số ngẫu nhiên cho mã hóa)
+    nonce: {
+      type: String
+    },
+    senderPublicKey: {
+      // ✅ Thêm để receiver có thể giải mã
+      type: String
     }
   },
   { timestamps: true } // auto update createdAt & updatedAt
