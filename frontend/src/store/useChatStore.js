@@ -156,6 +156,7 @@ export const useChatStore = create((set, get) => ({
 
   subscribeToMessages: () => {
     const { selectedUser, isSoundEnabled } = get()
+    // eslint-disable-next-line
     const { authUser, privateKey } = useAuthStore.getState()
 
     if (!selectedUser) return
